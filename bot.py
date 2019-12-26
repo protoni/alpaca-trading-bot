@@ -1,5 +1,7 @@
 import requests, json
 import utils
+from datetime import datetime
+import dateutil.parser
 
 # Configs
 CONFIG_FILE = "config"
@@ -11,6 +13,7 @@ BASE_URL = "https://paper-api.alpaca.markets"
 ACCOUNT_URL = "{}/v2/account".format(BASE_URL)
 ORDERS_URL = "{}/v2/orders".format(BASE_URL)
 ASSETS_URL = "{}/v2/assets".format(BASE_URL)
+CLOCK_URL = "{}/v2/clock".format(BASE_URL)
 HEADERS={'APCA-API-KEY-ID':API_KEY, 'APCA-API-SECRET-KEY':SECRET_KEY}
 
 ASSETS_FILE = "assets.txt"
@@ -99,6 +102,27 @@ def save_assets():
         print("Trading assets OK")
     '''
 
+def get_clock():
+    r = requests.get(CLOCK_URL, headers=HEADERS)
+    
+    return json.loads(r.content)
+
+def is_market_open():
+    clock = get_clock()
+    timestamp = clock["timestamp"]
+    timestamp_date = dateutil.parser.parse(timestamp)
+    ms = timestamp_date.timestamp() * 1000
+    print("timestamp_utc" + str(timestamp_date))
+    print("ms" + str(ms))
+    print("Current market time: " + clock["timestamp"])
+    if clock["is_open"]:
+        closing_time = clock["next_close"]
+        closing_datetime = dateutil.parser.parse(closing_time)
+        closing_ms = closing_datetime.timestamp() * 1000
+        print("Market is open! Closes: " + utils.ms_to_timer(closing_ms - ms))
+    else:
+        print("Market closed!")
+
 def get_account():
     r = requests.get(ACCOUNT_URL, headers=HEADERS)
     
@@ -143,3 +167,4 @@ def init():
 init()
 print_all_stock_names()
 print_tradeable_stock_names()
+is_market_open()

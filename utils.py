@@ -65,5 +65,15 @@ def get_value_from_config(filename, param):
             
     return ""
 
+def ms_to_timer(ms):
+    millis=ms
+    millis = int(millis)
+    seconds=(millis/1000)%60
+    seconds = int(seconds)
+    minutes=(millis/(1000*60))%60
+    minutes = int(minutes)
+    hours=(millis/(1000*60*60))%24
+
+    return "%d hours : %d minutes : %d seconds" % (hours, minutes, seconds)
 
 
