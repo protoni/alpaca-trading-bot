@@ -2,6 +2,7 @@ import requests, json
 import utils
 from datetime import datetime
 import dateutil.parser
+from Info import *
 
 # Configs
 CONFIG_FILE = "config"
@@ -112,9 +113,7 @@ def is_market_open():
     timestamp = clock["timestamp"]
     timestamp_date = dateutil.parser.parse(timestamp)
     ms = timestamp_date.timestamp() * 1000
-    print("timestamp_utc" + str(timestamp_date))
-    print("ms" + str(ms))
-    print("Current market time: " + clock["timestamp"])
+    
     if clock["is_open"]:
         closing_time = clock["next_close"]
         closing_datetime = dateutil.parser.parse(closing_time)
@@ -155,10 +154,12 @@ def init():
     check_config()
     save_assets()
 
-#response = create_order("MSFT", 1000, "buy", "market", "gtc")
-#response = create_order("AAPL", 100, "buy", "market", "gtc")
+def test_info():
+    ticker = Info("MSFT")
+    
+    ticker.get_actions()
 
-#print(response)
+
 
 #orders = get_orders()
 #print(orders)
@@ -168,3 +169,7 @@ init()
 print_all_stock_names()
 print_tradeable_stock_names()
 is_market_open()
+#test_info()
+response = create_order("MSFT", 1000, "buy", "market", "gtc")
+print(response)
+#response = create_order("AAPL", 100, "sell", "market", "gtc")
